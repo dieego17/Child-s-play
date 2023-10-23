@@ -130,15 +130,19 @@ const loadNames = () =>{
 }
 document.addEventListener("DOMContentLoaded", loadNames);
 
-//Evento poner nombre
+ //Evento poner nombre
 const changeName = (event)=>{
   let element = event.target;
-  console.log("buenasss")
-  configname__input.textContent = data__name.value;
+  data__titlename.classList.remove("displaynone")
+  data.classList.remove("displaynone");
+  lista.prepend(configname__input.textContent)
+  configname__input.value = data__name.value;
 }
 configname__button.addEventListener("click", changeName)
 
 let listaAva = document.querySelector(".configimage__containerimages")
+
+
 
 //cargar nombres en el select
 const loadAvatar = () =>{
@@ -150,6 +154,17 @@ const loadAvatar = () =>{
     img.src = "./assets/images/configavatars/"+imagenAle+".png";
     img.className = "configimage__img";
     listaAva.appendChild(img)
+
+    //evento para escoger avatar
+    const selectImg = (event) =>{
+      let element = event.target;
+      data.classList.remove("displaynone");
+      data__img.classList.remove("displaynone");
+      if(element.nodeName === "IMG"){
+        data__img.src = element.src;
+      }
+    }
+    img.addEventListener("click", selectImg)
   } 
 }
 document.addEventListener("DOMContentLoaded", loadAvatar);
@@ -161,3 +176,42 @@ const changeAvatar = (event)=>{
 
 }
 configimage.addEventListener("click", changeAvatar);
+
+
+//evento cargar array operadores y comida
+const loadPlay = () =>{
+
+  for(let i = 0; i<operators.length; i++){
+    let imgO = document.createElement("IMG");
+    imgO.className = "configgames__imgoperators";
+    imgO.src = "./assets/images/operators/"+operators[i]+".png";
+    configgames__operations.appendChild(imgO)
+  }
+
+  for(let i = 0; i<foods.length; i++){
+    let imgF = document.createElement("IMG");
+    imgF.className = "configgames__imgfoods";
+    imgF.src = "./assets/images/foods/"+foods[i]+".png";
+    configgames__foods.appendChild(imgF)
+  }
+
+}
+
+document.addEventListener("DOMContentLoaded", loadPlay)
+
+//evento jugar
+const playGame = (event) =>{
+
+  let element = event.target;
+  if(element.nodeName === "IMG"){
+    if(data__titlename.value != "" && data__img.src != "./assets/images/estrella.png"){
+      location.reload();
+    }else{
+      config.style.display = "none";
+    }
+  }
+}
+configgames__container.addEventListener("click", playGame)
+
+
+
