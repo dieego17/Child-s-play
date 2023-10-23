@@ -144,11 +144,12 @@ let listaAva = document.querySelector(".configimage__containerimages")
 const loadAvatar = () =>{
 
   for(let i = 0; i<8; i++){
-    let avatarAle = Math.floor(Math.random()*configavatars.length);
-      let img = document.createElement("IMG");
-      img.src = "./assets/images/configavatars/"+configavatars[avatarAle]+".png";
-      img.className = "configimage__img";
-      listaAva.appendChild(img)
+    let indiceAle = Math.floor(Math.random()*configavatars.length);
+    let imagenAle = configavatars.splice(indiceAle,1)[0];
+    let img = document.createElement("IMG");
+    img.src = "./assets/images/configavatars/"+imagenAle+".png";
+    img.className = "configimage__img";
+    listaAva.appendChild(img)
   } 
 }
 document.addEventListener("DOMContentLoaded", loadAvatar);
