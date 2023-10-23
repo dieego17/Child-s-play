@@ -13,7 +13,7 @@ const gameavatars = [
   "avatar2",
   "avatar3",
   "avatar4",
-  "avatar5",
+  "avatar5",  
   "avatar6",
 ];
 
@@ -106,7 +106,7 @@ const finishgame = document.getElementById("finishgame");
 // -----------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------
 
-
+let lista = document.querySelector(".configname__select");
 
 // Para resetear las animaciones
 configname.addEventListener("animationend", () => {
@@ -117,3 +117,46 @@ configimage.addEventListener("animationend", () => {
 });
 
 
+//cargar nombres en el select
+const loadNames = () =>{
+
+  for(let i = 0; i<names.length; i++){
+    let option = document.createElement("OPTION");
+    option.textContent = names[i];
+    option.className = "configname__option";
+    option.name = names[i];
+    lista.appendChild(option);
+  } 
+}
+document.addEventListener("DOMContentLoaded", loadNames);
+
+//Evento poner nombre
+const changeName = (event)=>{
+  let element = event.target;
+  console.log("buenasss")
+  configname__input.textContent = data__name.value;
+}
+configname__button.addEventListener("click", changeName)
+
+let listaAva = document.querySelector(".configimage__containerimages")
+
+//cargar nombres en el select
+const loadAvatar = () =>{
+
+  for(let i = 0; i<8; i++){
+    let avatarAle = Math.floor(Math.random()*configavatars.length);
+      let img = document.createElement("IMG");
+      img.src = "./assets/images/configavatars/"+configavatars[avatarAle]+".png";
+      img.className = "configimage__img";
+      listaAva.appendChild(img)
+  } 
+}
+document.addEventListener("DOMContentLoaded", loadAvatar);
+
+
+
+//Evento para cargar las animaciones
+const changeAvatar = (event)=>{
+
+}
+configimage.addEventListener("click", changeAvatar);
