@@ -130,13 +130,27 @@ const loadNames = () =>{
 }
 document.addEventListener("DOMContentLoaded", loadNames);
 
- //Evento poner nombre
+//selecionar un nombre
+const selectName = (event) =>{
+  let element = event.target;
+  configname__input.value = element.value
+}
+lista.addEventListener("change", selectName);
+//Evento poner nombre
 const changeName = (event)=>{
   let element = event.target;
   data__titlename.classList.remove("displaynone")
-  data.classList.remove("displaynone");
+  data.classList.remove("displaynone")
   lista.prepend(configname__input.textContent)
-  configname__input.value = data__name.value;
+  data__name.textContent = configname__input.value;
+  let option = document.createElement("OPTION");
+  option.textContent = configname__input.value;
+  option.className = "configname__option";
+  option.name = configname__input.value;
+  if(option.textContent != configname__input.value){
+    lista.prepend(option)
+  }
+  
 }
 configname__button.addEventListener("click", changeName)
 
