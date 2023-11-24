@@ -13,7 +13,7 @@ const gameavatars = [
   "avatar2",
   "avatar3",
   "avatar4",
-  "avatar5",  
+  "avatar5",
   "avatar6",
 ];
 
@@ -83,10 +83,11 @@ const config = document.getElementById("config");
 const configname = document.getElementById("configname");
 const configname__input = document.getElementById("configname__input");
 const configname__button = document.getElementById("configname__button");
+const configname_select=configname.querySelector(".configname__select");
 
 // Para las imagenes
 const configimage = document.getElementById("configimage");
-
+const configimage__container = configimage.querySelector(".configimage__containerimages");
 // Para la configuración de las parejas
 const configgames__couples = document.getElementById("configgames__foods");
 const configgames__container = document.getElementById(
@@ -99,15 +100,178 @@ const game__grid = document.getElementById("game__grid");
 const finishgame = document.getElementById("finishgame");
 
 // -----------------------------------------------------------------------------------
+let imgJuego;
+let couples = [];
+let seleccion=[];
 // Variables
-
-
-
+//-------------------------------------Funciones-------------------------------------
+const showName=(nombre)=>{
+  if (data.classList.contains("displaynone")) {
+    data.classList.remove("displaynone");
+  }
+  data__titlename.classList.remove("displaynone");
+  data__name.textContent=nombre;
+}
+const showAvatar=(src)=>{
+  if (data.classList.contains("displaynone")) {
+    data.classList.remove("displaynone");
+  }
+  data__img.classList.remove("displaynone");
+  data__img.setAttribute("src",src);
+}
+const loadNames=()=>{
+  let namesFrag = document.createDocumentFragment();
+  let name;
+  names.forEach(element => {
+    name=document.createElement("option");
+    name.setAttribute("name",element);
+    name.textContent=element;
+    name.classList.add("configname__option");
+    namesFrag.appendChild(name);
+  });
+  configname_select.appendChild(namesFrag);
+}
+const addName = ()=>{
+  let name = document.createElement("option");
+  name.setAttribute("name",configname__input.value);
+  name.textContent=configname__input.value;
+  name.classList.add("configname__option");
+  name.setAttribute("selected",true);
+  configname_select.insertBefore(name,configname_select.firstElementChild);
+  showName(configname__input.value);
+}
+const generateAvatars=()=>{
+  let avatares=[];
+  let posAl;
+  let image;
+  let avataresFrag = document.createDocumentFragment();
+  for (let i = 0; i < 8; i++) {
+    image = document.createElement("img");
+    image.classList.add("configimage__img");
+    do {
+      posAl=Math.floor(Math.random()*configavatars.length);
+    } while (avatares.includes(configavatars[posAl]));
+    avatares.push(configavatars[posAl]);
+    image.setAttribute("src",`./assets/images/configavatars/${configavatars[posAl]}.png`);
+    avataresFrag.appendChild(image);
+  }
+  configimage__container.appendChild(avataresFrag);
+}
+const addConfGame=(array,url,estilo,parent)=>{
+  let fragment = document.createDocumentFragment();
+  let elemento;
+  array.forEach(element=>{
+    elemento=document.createElement("img");
+    elemento.classList.add(estilo);
+    elemento.setAttribute("src",`${url}/${element}.png`);
+    fragment.appendChild(elemento);
+  })
+  parent.appendChild(fragment);
+}
+const checkConf=()=>{
+  let valid = true;
+  if(data__titlename.classList.contains("displaynone")){
+    configname.classList.add("configerror")
+    valid=false;
+  }
+  if(data__img.classList.contains("displaynone")){
+    configimage.classList.add("configerror")
+    valid=false;
+  }
+  return valid;
+}
+const generateCouples=(array,url)=>{
+  let parejas = array;
+  let posAl;
+  array.forEach(element=>{
+    parejas.push(element);
+  })
+  while (parejas.length>0) {
+    posAl=Math.floor(Math.random()*parejas.length);
+    couples.push(`${url}/${parejas.splice(posAl,1)[0]}.png`);
+  }
+  // document.querySelectorAll(".game__img").forEach(element=>{
+  //   element.setAttribute("src",couples[element.getAttribute("alt")])
+  // })
+}
+const replaceImages = (images)=>{
+  images[seleccion[0]].setAttribute("src","./assets/images/estrella.png");
+  images[seleccion[1]].setAttribute("src","./assets/images/estrella.png");
+}
+const checkCouple=()=>{
+  let images = game__grid.children;
+  console.log(images[seleccion[0]]);
+  window.setTimeout(() => {
+    if (!(couples[seleccion[0]]===couples[seleccion[1]])) {
+      replaceImages(images);
+    }
+    seleccion=[];
+  }, 1000);
+}
+const checkFinish=()=>{
+  let finish = true;
+  let images  = game__grid.children;
+  for (const iterator of images) {
+    if (iterator.getAttribute("src")==="./assets/images/estrella.png") {
+      finish=false;
+    }
+  }
+  return finish;
+}
+//-------------------------------------/Funciones/-----------------------------------
 // -----------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------
 
-let lista = document.querySelector(".configname__select");
-
+//--------------------------------------eventos----------------------------------------
+document.addEventListener("DOMContentLoaded",()=>{
+  loadNames();
+  generateAvatars();
+  addConfGame(operators,"./assets/images/operators","configgames__imgoperators",configgames__container.children[0]);
+  addConfGame(foods,"./assets/images/foods","configgames__imgfoods",configgames__container.children[1]);
+});
+configname_select.addEventListener("change",()=>{
+  showName(configname_select.value);
+});
+configname__button.addEventListener("click",addName);
+configimage__container.addEventListener("click",(event)=>{
+  if (event.target.tagName==="IMG") {
+    showAvatar(event.target.getAttribute("src"));
+  }
+})
+configgames__container.addEventListener("click",(event)=>{
+  let parent = event.target.parentElement;
+  if(parent.getAttribute("id")==="configgames__operations"||parent.getAttribute("id")==="configgames__foods"){
+    if(checkConf()){
+      config.classList.add("config__hide");
+      game.classList.add("game__show");
+      imgJuego=parent.getAttribute("id");
+      if(parent.getAttribute("id")==="configgames__operations"){
+        generateCouples(operators,"./assets/images/operators");
+      } else {
+        generateCouples(foods,"./assets/images/foods");
+      }
+    };
+  }
+})
+game__grid.addEventListener("click",(event)=>{
+  if (event.target.tagName==="IMG") {
+    if (seleccion.length<2) {
+      if(!seleccion.includes(event.target.getAttribute("alt"))){
+        seleccion.push(event.target.getAttribute("alt"));
+        event.target.setAttribute("src",couples[event.target.getAttribute("alt")]);
+        if (seleccion.length===2) {
+          checkCouple();
+        }
+      }
+    }
+    if (checkFinish()) {
+      finishgame.classList.add("finishgame__show");
+    }
+  }
+})
+document.getElementById("finishgame__button").addEventListener("click",()=>{
+  location.reload();
+})
 // Para resetear las animaciones
 configname.addEventListener("animationend", () => {
   configname.classList.remove("configerror");
@@ -115,117 +279,5 @@ configname.addEventListener("animationend", () => {
 configimage.addEventListener("animationend", () => {
   configimage.classList.remove("configerror");
 });
-
-
-//cargar nombres en el select
-const loadNames = () =>{
-
-  for(let i = 0; i<names.length; i++){
-    let option = document.createElement("OPTION");
-    option.textContent = names[i];
-    option.className = "configname__option";
-    option.name = names[i];
-    lista.appendChild(option);
-  } 
-}
-document.addEventListener("DOMContentLoaded", loadNames);
-
-//selecionar un nombre
-const selectName = (event) =>{
-  let element = event.target;
-  configname__input.value = element.value
-}
-lista.addEventListener("change", selectName);
-//Evento poner nombre
-const changeName = (event)=>{
-  let element = event.target;
-  data__titlename.classList.remove("displaynone")
-  data.classList.remove("displaynone")
-  lista.prepend(configname__input.textContent)
-  data__name.textContent = configname__input.value;
-  let option = document.createElement("OPTION");
-  option.textContent = configname__input.value;
-  option.className = "configname__option";
-  option.name = configname__input.value;
-  if(option.textContent != configname__input.value){
-    lista.prepend(option)
-  }
-  
-}
-configname__button.addEventListener("click", changeName)
-
-let listaAva = document.querySelector(".configimage__containerimages")
-
-
-
-//cargar nombres en el select
-const loadAvatar = () =>{
-
-  for(let i = 0; i<8; i++){
-    let indiceAle = Math.floor(Math.random()*configavatars.length);
-    let imagenAle = configavatars.splice(indiceAle,1)[0];
-    let img = document.createElement("IMG");
-    img.src = "./assets/images/configavatars/"+imagenAle+".png";
-    img.className = "configimage__img";
-    listaAva.appendChild(img)
-
-    //evento para escoger avatar
-    const selectImg = (event) =>{
-      let element = event.target;
-      data.classList.remove("displaynone");
-      data__img.classList.remove("displaynone");
-      if(element.nodeName === "IMG"){
-        data__img.src = element.src;
-      }
-    }
-    img.addEventListener("click", selectImg)
-  } 
-}
-document.addEventListener("DOMContentLoaded", loadAvatar);
-
-
-
-//Evento para cargar las animaciones
-const changeAvatar = (event)=>{
-
-}
-configimage.addEventListener("click", changeAvatar);
-
-
-//evento cargar array operadores y comida
-const loadPlay = () =>{
-
-  for(let i = 0; i<operators.length; i++){
-    let imgO = document.createElement("IMG");
-    imgO.className = "configgames__imgoperators";
-    imgO.src = "./assets/images/operators/"+operators[i]+".png";
-    configgames__operations.appendChild(imgO)
-  }
-
-  for(let i = 0; i<foods.length; i++){
-    let imgF = document.createElement("IMG");
-    imgF.className = "configgames__imgfoods";
-    imgF.src = "./assets/images/foods/"+foods[i]+".png";
-    configgames__foods.appendChild(imgF)
-  }
-
-}
-
-document.addEventListener("DOMContentLoaded", loadPlay)
-
-//evento jugar
-const playGame = (event) =>{
-
-  let element = event.target;
-  if(element.nodeName === "IMG"){
-    if(data__titlename.value != "" && data__img.src != "./assets/images/estrella.png"){
-      location.reload();
-    }else{
-      config.style.display = "none";
-    }
-  }
-}
-configgames__container.addEventListener("click", playGame)
-
 
 
